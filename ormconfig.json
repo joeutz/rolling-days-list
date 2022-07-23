@@ -1,0 +1,16 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 55000,
+  "username": "postgres",
+  "password": "postgrespw",
+  "database": "rolling_days",
+  "entities": [
+    "**/*.entity{.ts,.js}"
+  ],
+  "migrationsTableName": "migration",
+  "migrations": [
+    "src/migrations/*.ts"
+  ],
+  "ssl": false
+}
