@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from './entities/task.entity';
+import { Task, TaskStatus } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
@@ -20,13 +20,39 @@ export class TasksService {
   //   return `This action returns all tasks`;
   // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} task`;
-  // }
+  findOne(id: number) {
+    const taskToBeUpdated = Promise.resolve(
+      this.taskRepository
+        .findOne({
+          where: [{ id: id }],
+        })
+        .then((x: Task) => x)
+        .catch(() => {
+          throw new Error(`Unable to find task with id: ${id}`);
+        }),
+    );
+    return taskToBeUpdated;
+  }
 
-  // update(id: number, description?: string) {
-  //   return `This action updates a #${id} task with description of ${description}`;
-  // }
+  async update(
+    id: number,
+    description?: string,
+    assignmentDate?: Date,
+    status?: TaskStatus,
+  ) {
+    const taskToBeUpdated = await Promise.resolve(this.findOne(id)).then(
+      (x) => x,
+    );
+    taskToBeUpdated.assignmentDate = assignmentDate
+      ? assignmentDate
+      : taskToBeUpdated.assignmentDate;
+    taskToBeUpdated.description = description
+      ? description
+      : taskToBeUpdated.description;
+    taskToBeUpdated.status = status ? status : taskToBeUpdated.status;
+
+    return taskToBeUpdated;
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} task`;

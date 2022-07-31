@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task, TaskStatus } from './entities/task.entity';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
@@ -33,26 +34,24 @@ describe('TasksController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should add with today as assignment_date and status = active', () => {
+  it('should call the service create method', () => {
     const spy = jest.spyOn(service, 'create').mockReturnValue(new Task('test'));
     const createTaskDto = { description: 'test' };
     const newTask = controller.create(createTaskDto);
-    expect(newTask.description).toBe('test');
-    const currentDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
-    expect(
-      newTask.assignmentDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }),
-    ).toBe(
-      currentDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }),
-    );
     expect(newTask.status).toBe(TaskStatus.ACTIVE);
+    expect(spy).toBeCalledTimes(1);
+  });
+  it('should call the service update method', () => {
+    const updateTaskDto = {
+      id: '1',
+      description: 'test',
+      assignment_date: new Date(),
+      status: TaskStatus.ACTIVE,
+    };
+    const spy = jest
+      .spyOn(service, 'update')
+      .mockReturnValue(Promise.resolve(new Task('test')));
+    controller.update(updateTaskDto.id, updateTaskDto);
     expect(spy).toBeCalledTimes(1);
   });
 });

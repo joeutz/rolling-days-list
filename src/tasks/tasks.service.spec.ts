@@ -48,4 +48,75 @@ describe('TasksService', () => {
     expect(newTask.status).toBe(TaskStatus.ACTIVE);
     expect(spy).toBeCalledTimes(1);
   });
+  it('should be able to edit the task', async () => {
+    jest.spyOn(repo, 'save').mockImplementation();
+    const assignmentDate = new Date('02/02/2022');
+    const newTask = new Task('test');
+    newTask.assignmentDate = new Date();
+    newTask.id = 1;
+    const findSpy = jest
+      .spyOn(repo, 'findOne')
+      .mockReturnValueOnce(Promise.resolve(newTask));
+    const updatedTask = await service.update(
+      newTask.id,
+      'updated description',
+      assignmentDate,
+      newTask.status,
+    );
+    expect(findSpy).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith({
+      where: [{ id: newTask.id }],
+    });
+    expect(updatedTask.description).toBe('updated description');
+    expect(updatedTask.assignmentDate).toBe(assignmentDate);
+  });
+  it('sending null to update for date leaves date the same as before', async () => {
+    jest.spyOn(repo, 'save').mockImplementation();
+    const assignmentDate = new Date('02/02/2022');
+    const newTask = new Task('test');
+    newTask.assignmentDate = assignmentDate;
+    newTask.id = 1;
+    const findSpy = jest
+      .spyOn(repo, 'findOne')
+      .mockReturnValue(Promise.resolve(newTask));
+
+    const updatedTask = await service.update(
+      newTask.id,
+      'updated description',
+      undefined,
+      newTask.status,
+    );
+    expect(findSpy).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith({
+      where: [{ id: newTask.id }],
+    });
+    expect(updatedTask.description).toBe('updated description');
+    expect(updatedTask.assignmentDate).toBe(assignmentDate);
+    const updatedAssignmentDate = new Date('3/2/2022');
+    const updatedTask2 = await service.update(
+      newTask.id,
+      'updated description',
+      updatedAssignmentDate,
+      newTask.status,
+    );
+    expect(findSpy).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith({
+      where: [{ id: newTask.id }],
+    });
+    expect(updatedTask2.description).toBe('updated description');
+    expect(updatedTask2.assignmentDate).toBe(updatedAssignmentDate);
+    expect(updatedTask2.status).toBe(TaskStatus.ACTIVE);
+
+    const updatedTask3 = await service.update(
+      newTask.id,
+      'updated description',
+    );
+    expect(findSpy).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith({
+      where: [{ id: newTask.id }],
+    });
+    expect(updatedTask3.description).toBe('updated description');
+    expect(updatedTask3.assignmentDate).toBe(updatedAssignmentDate);
+    expect(updatedTask3.status).toBe(TaskStatus.ACTIVE);
+  });
 });
