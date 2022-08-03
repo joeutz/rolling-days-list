@@ -25,25 +25,30 @@ export class TasksController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTaskDto: TaskDto) {
-    return this.tasksService.update(
-      id,
-      updateTaskDto.description,
-      updateTaskDto.assignmentDate,
-      updateTaskDto.status,
-    );
+    const assignmentDate = updateTaskDto.assignmentDate
+      ? new Date(new Date(updateTaskDto.assignmentDate).setUTCHours(0, 0, 0, 0))
+      : undefined;
+    try {
+      return this.tasksService.update(
+        id,
+        updateTaskDto.description,
+        assignmentDate,
+        updateTaskDto.status,
+      );
+    } catch (e) {
+      return 'error';
+    }
   }
 
   @Get('today')
   async getAssignmentsForToday(): Promise<TaskDto[]> {
     const tasksForToday = await this.tasksService.getAssignmentsForToday();
-    console.log(tasksForToday);
     return tasksForToday;
   }
 
   @Get()
   async findAll(): Promise<TaskDto[]> {
     const tasks = this.tasksService.findAll();
-    console.log(tasks);
     return tasks;
   }
 
