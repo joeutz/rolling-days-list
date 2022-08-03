@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Task, TaskStatus } from './entities/task.entity';
 import { TasksService } from './tasks.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 
 describe('TasksService', () => {
   let service: TasksService;
@@ -53,7 +53,7 @@ describe('TasksService', () => {
     const assignmentDate = new Date('02/02/2022');
     const newTask = new Task('test');
     newTask.assignmentDate = new Date();
-    newTask.id = 1;
+    newTask.id = 'AN_UUID';
     const findSpy = jest
       .spyOn(repo, 'findOne')
       .mockReturnValueOnce(Promise.resolve(newTask));
@@ -75,7 +75,7 @@ describe('TasksService', () => {
     const assignmentDate = new Date('02/02/2022');
     const newTask = new Task('test');
     newTask.assignmentDate = assignmentDate;
-    newTask.id = 1;
+    newTask.id = '1UUID';
     const findSpy = jest
       .spyOn(repo, 'findOne')
       .mockReturnValue(Promise.resolve(newTask));
@@ -118,5 +118,18 @@ describe('TasksService', () => {
     expect(updatedTask3.description).toBe('updated description');
     expect(updatedTask3.assignmentDate).toBe(updatedAssignmentDate);
     expect(updatedTask3.status).toBe(TaskStatus.ACTIVE);
+  });
+  it('get assignments for today runs query from beginning of day to end of day', async () => {
+    //create mock return and create spy that validates the start/end dates passed to the task repository
+    const findSpy = jest.spyOn(repo, 'find').mockResolvedValue([]);
+    const startDay = new Date(new Date().setUTCHours(0, 0, 0, 0));
+    const results = service.getAssignmentsForToday();
+    expect(findSpy).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith({
+      where: {
+        assignmentDate: startDay,
+      },
+    });
+    expect(await Promise.resolve(results)).toStrictEqual([]);
   });
 });

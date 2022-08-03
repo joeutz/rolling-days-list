@@ -16,11 +16,11 @@ export class TasksService {
     return task;
   }
 
-  // findAll() {
-  //   return `This action returns all tasks`;
-  // }
+  async findAll(): Promise<Task[]> {
+    return await this.taskRepository.find();
+  }
 
-  findOne(id: number) {
+  findOne(id: string) {
     const taskToBeUpdated = Promise.resolve(
       this.taskRepository
         .findOne({
@@ -35,7 +35,7 @@ export class TasksService {
   }
 
   async update(
-    id: number,
+    id: string,
     description?: string,
     assignmentDate?: Date,
     status?: TaskStatus,
@@ -50,10 +50,19 @@ export class TasksService {
       ? description
       : taskToBeUpdated.description;
     taskToBeUpdated.status = status ? status : taskToBeUpdated.status;
-
+    this.taskRepository.save(taskToBeUpdated);
     return taskToBeUpdated;
   }
 
+  async getAssignmentsForToday(): Promise<Task[]> {
+    const startDay = new Date(new Date().setUTCHours(0, 0, 0, 0));
+    const results = this.taskRepository.find({
+      where: {
+        assignmentDate: startDay,
+      },
+    });
+    return results;
+  }
   // remove(id: number) {
   //   return `This action removes a #${id} task`;
   // }

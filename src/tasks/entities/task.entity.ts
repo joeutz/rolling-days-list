@@ -1,3 +1,4 @@
+import { AutoMap } from '@automapper/classes';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum TaskStatus {
@@ -13,13 +14,16 @@ export class Task {
     this.status = TaskStatus.ACTIVE;
   }
 
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
+  @AutoMap()
+  id: string;
 
   @Column()
+  @AutoMap()
   description: string;
 
   @Column()
+  @AutoMap()
   assignmentDate: Date;
 
   @Column({
@@ -27,5 +31,6 @@ export class Task {
     enum: TaskStatus,
     default: TaskStatus.ACTIVE,
   })
+  @AutoMap()
   status: TaskStatus;
 }

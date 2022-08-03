@@ -1,8 +1,8 @@
-import { Controller, Post, Body, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Param, Patch, Get } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskDto } from './dto/task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -24,13 +24,27 @@ export class TasksController {
   // }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  update(@Param('id') id: string, @Body() updateTaskDto: TaskDto) {
     return this.tasksService.update(
-      +id,
+      id,
       updateTaskDto.description,
       updateTaskDto.assignmentDate,
       updateTaskDto.status,
     );
+  }
+
+  @Get('today')
+  async getAssignmentsForToday(): Promise<TaskDto[]> {
+    const tasksForToday = await this.tasksService.getAssignmentsForToday();
+    console.log(tasksForToday);
+    return tasksForToday;
+  }
+
+  @Get()
+  async findAll(): Promise<TaskDto[]> {
+    const tasks = this.tasksService.findAll();
+    console.log(tasks);
+    return tasks;
   }
 
   // @Delete(':id')

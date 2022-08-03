@@ -7,7 +7,7 @@ export const dataConfig = {
   username: 'postgres',
   password: 'postgrespw',
   database: 'rolling_days',
-  entities: ['src/**/*.entity{ .ts,.js}'],
+  entities: ['dist/**/*.entity{ .ts,.js}'],
   synchronize: false,
   migrations: ['src/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations_rolling_days',

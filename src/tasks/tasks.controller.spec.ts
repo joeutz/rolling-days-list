@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task, TaskStatus } from './entities/task.entity';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
@@ -52,6 +51,13 @@ describe('TasksController', () => {
       .spyOn(service, 'update')
       .mockReturnValue(Promise.resolve(new Task('test')));
     controller.update(updateTaskDto.id, updateTaskDto);
+    expect(spy).toBeCalledTimes(1);
+  });
+  it('can get assignments for today', () => {
+    const spy = jest
+      .spyOn(service, 'getAssignmentsForToday')
+      .mockReturnValue(Promise.resolve([]));
+    controller.getAssignmentsForToday();
     expect(spy).toBeCalledTimes(1);
   });
 });

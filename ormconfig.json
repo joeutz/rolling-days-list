@@ -6,11 +6,11 @@
   "password": "postgrespw",
   "database": "rolling_days",
   "entities": [
-    "**/*.entity{.ts,.js}"
+    "dist/**/**.entity{.ts,.js}"
   ],
   "migrationsTableName": "migration",
   "migrations": [
-    "src/migrations/*.ts"
+    "dist/migrations/*.ts"
   ],
   "ssl": false
 }

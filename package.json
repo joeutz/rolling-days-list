@@ -30,6 +30,9 @@
     "migration:run": "typeorm -- migration:run"
   },
   "dependencies": {
+    "@automapper/classes": "^8.7.2",
+    "@automapper/core": "^8.7.2",
+    "@automapper/nestjs": "^8.7.2",
     "@nestjs/common": "^9.0.5",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
