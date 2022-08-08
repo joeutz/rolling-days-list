@@ -6,6 +6,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { configService } from './config.service';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { classes } from '@automapper/classes';
     AutomapperModule.forRoot({
       strategyInitializer: classes(),
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
