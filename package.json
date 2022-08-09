@@ -23,7 +23,7 @@
     "migrate:up": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "pretypeorm": "(rm ormconfig.json || :) && ts-node -r tsconfig-paths/register src/scripts/write-type-orm-config.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate -n",
+    "typeorm:migration:generate": "npm run typeorm -- migration:generate ",
     "typeorm:migration:run": "npm run typeorm -- migration:run",
     "migrate:down": "ts-node ./node_modules/typeorm/cli.js migration:revert",
     "migration:generate": "typeorm migration:generate ",

@@ -1,5 +1,6 @@
 import { AutoMap } from '@automapper/classes';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from "../../common/entities/base.entity"
 
 export enum TaskStatus {
   ACTIVE = 'active',
@@ -7,16 +8,13 @@ export enum TaskStatus {
 }
 
 @Entity()
-export class Task {
+export class Task extends BaseEntity {
   constructor(description: string) {
+    super()
     this.description = description;
     this.assignmentDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
     this.status = TaskStatus.ACTIVE;
   }
-
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  @AutoMap()
-  id: string;
 
   @Column()
   @AutoMap()

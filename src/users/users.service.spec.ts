@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import exp from 'constants';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -32,6 +33,8 @@ describe('UsersService', () => {
     expect(newUser.firstName).toBe('first');
     expect(newUser.lastName).toBe('last');
     expect(newUser.emailAddress).toBe('first@last.com');
+    expect(newUser.createDateTime).toBeTruthy();
+    expect(newUser.lastChangedDateTime).toBeTruthy();
     expect(spy).toBeCalledTimes(1);
   });
 });

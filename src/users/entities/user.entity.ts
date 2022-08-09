@@ -1,19 +1,15 @@
 import { AutoMap } from "@automapper/classes";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "../../common/entities/base.entity"
+import { Column, Entity } from "typeorm";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     constructor(firstName: string, lastName: string, emailAddress: string) {
+        super()
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddress = emailAddress;
     }
-
-
-    @PrimaryGeneratedColumn('uuid', { name: 'id' })
-    @AutoMap()
-    id: string;
-
     @Column()
     @AutoMap()
     firstName: string;

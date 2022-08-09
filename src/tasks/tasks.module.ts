@@ -10,4 +10,4 @@ import { TaskProfile } from 'src/tasks/tasks.mapper';
   controllers: [TasksController],
   providers: [TasksService, TaskProfile],
 })
-export class TasksModule {}
+export class TasksModule { }
