@@ -4,7 +4,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 require('dotenv').config();
 
 export class ConfigService {
-  constructor(private env: { [k: string]: string | undefined }) {}
+  constructor(private env: { [k: string]: string | undefined }) { }
 
   private getValue(key: string, throwOnMissing = true): string {
     const value = this.env[key];
@@ -45,9 +45,12 @@ export class ConfigService {
       // cli: {
       //   migrationsDir: 'src/migrations',
       // },
-
+      logging: true,
       ssl: this.isProduction(),
     };
+  }
+  public get(key: string): string {
+    return this.getValue(key);
   }
 }
 
