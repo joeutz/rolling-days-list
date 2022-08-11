@@ -1,11 +1,14 @@
-import { Controller, Post, Body, Param, Patch, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Param, Patch, Get, UseGuards, Req } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
 import { TaskDto } from './dto/task.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { User } from 'src/users/entities/user.entity';
+import { RequestUser } from 'src/common/interceptor/user-decorator';
 
 @Controller('tasks')
+@UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
@@ -42,8 +45,9 @@ export class TasksController {
   }
 
   @Get('today')
-  @UseGuards(JwtAuthGuard)
-  async getAssignmentsForToday(): Promise<TaskDto[]> {
+  async getAssignmentsForToday(@RequestUser() user: User): Promise<TaskDto[]> {
+    console.log(user);
+    // const decodedJwtAccessToken: JwtPayload = this.jwtService.decode(signedJwtAccessToken);
     const tasksForToday = await this.tasksService.getAssignmentsForToday();
     return tasksForToday;
   }
