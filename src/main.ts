@@ -10,6 +10,10 @@ async function bootstrap() {
     .setDescription('The Rolling Tasks by Day API.  Plan your day with a Fresh Start')
     .setVersion('1.0')
     .addTag('rollingDays')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access_token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

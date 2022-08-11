@@ -1,12 +1,13 @@
-import { Controller, Post, Body, Param, Patch, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Patch, Get, UseGuards } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
 import { TaskDto } from './dto/task.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
   @Post()
   create(@Body() createTaskDto: CreateTaskDto): Task {
@@ -41,6 +42,7 @@ export class TasksController {
   }
 
   @Get('today')
+  @UseGuards(JwtAuthGuard)
   async getAssignmentsForToday(): Promise<TaskDto[]> {
     const tasksForToday = await this.tasksService.getAssignmentsForToday();
     return tasksForToday;

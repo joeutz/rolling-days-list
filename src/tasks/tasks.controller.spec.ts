@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Task, TaskStatus } from './entities/task.entity';
@@ -7,7 +8,7 @@ const mockTask = new Task('test');
 describe('TasksController', () => {
   let controller: TasksController;
   let service: TasksService;
-
+  const mockJwtService = {};
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TasksController],
@@ -22,6 +23,7 @@ describe('TasksController', () => {
               .mockImplementation((desc: string) => Promise.resolve(mockTask)),
           },
         },
+        { provide: JwtService, useValue: mockJwtService }
       ],
     }).compile();
 
