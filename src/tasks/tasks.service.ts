@@ -2,16 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task, TaskStatus } from './entities/task.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
-  ) {}
+  ) { }
 
-  create(description: string) {
-    const task = new Task(description);
+  create(description: string, currentUser: User) {
+    const task = new Task(description, currentUser);
     this.taskRepository.save(task);
     return task;
   }
@@ -35,11 +36,7 @@ export class TasksService {
   }
 
   async update(
-    id: string,
-    description?: string,
-    assignmentDate?: Date,
-    status?: TaskStatus,
-  ) {
+    { id, description, assignmentDate, status, currentUser }: { id: string; description?: string; assignmentDate?: Date; status?: TaskStatus; currentUser: User; }) {
     const taskToBeUpdated = await Promise.resolve(this.findOne(id)).then(
       (x) => x,
     );
@@ -50,6 +47,8 @@ export class TasksService {
       ? description
       : taskToBeUpdated.description;
     taskToBeUpdated.status = status ? status : taskToBeUpdated.status;
+    taskToBeUpdated.lastChangedBy = currentUser.id;
+    taskToBeUpdated.lastChangedDateTime = new Date();
     this.taskRepository.save(taskToBeUpdated);
     return taskToBeUpdated;
   }

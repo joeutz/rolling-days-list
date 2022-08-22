@@ -1,5 +1,6 @@
 import { AutoMap } from '@automapper/classes';
-import { Column, Entity } from 'typeorm';
+import { User } from '../../users/entities/user.entity'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from "../../common/entities/base.entity"
 
 export enum TaskStatus {
@@ -9,11 +10,13 @@ export enum TaskStatus {
 
 @Entity()
 export class Task extends BaseEntity {
-  constructor(description: string) {
-    super()
+  constructor(description: string, currentUser: User) {
+    const currentUserId = currentUser ? currentUser.id : 'System';
+    super(currentUserId)
     this.description = description;
     this.assignmentDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
     this.status = TaskStatus.ACTIVE;
+    this.user = currentUser;
   }
 
   @Column()
@@ -31,4 +34,7 @@ export class Task extends BaseEntity {
   })
   @AutoMap()
   status: TaskStatus;
+
+  @ManyToOne(() => User, (user: User) => user.tasks)
+  user: User;
 }

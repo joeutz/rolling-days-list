@@ -1,10 +1,13 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
 import { Task, TaskStatus } from './entities/task.entity';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
-const mockTask = new Task('test');
+
+const currentUser = new User('first', 'last', 'first@last.com');
+const mockTask = new Task('test', currentUser);
 describe('TasksController', () => {
   let controller: TasksController;
   let service: TasksService;
@@ -36,9 +39,9 @@ describe('TasksController', () => {
   });
 
   it('should call the service create method', () => {
-    const spy = jest.spyOn(service, 'create').mockReturnValue(new Task('test'));
+    const spy = jest.spyOn(service, 'create').mockReturnValue(new Task('test', currentUser));
     const createTaskDto = { description: 'test' };
-    const newTask = controller.create(createTaskDto);
+    const newTask = controller.create(createTaskDto, currentUser);
     expect(newTask.status).toBe(TaskStatus.ACTIVE);
     expect(spy).toBeCalledTimes(1);
   });
@@ -51,15 +54,15 @@ describe('TasksController', () => {
     };
     const spy = jest
       .spyOn(service, 'update')
-      .mockReturnValue(Promise.resolve(new Task('test')));
-    controller.update(updateTaskDto.id, updateTaskDto);
+      .mockReturnValue(Promise.resolve(new Task('test', currentUser)));
+    controller.update(updateTaskDto.id, updateTaskDto, currentUser);
     expect(spy).toBeCalledTimes(1);
   });
   it('can get assignments for today', () => {
     const spy = jest
       .spyOn(service, 'getAssignmentsForToday')
       .mockReturnValue(Promise.resolve([]));
-    controller.getAssignmentsForToday();
+    controller.getAssignmentsForToday(currentUser);
     expect(spy).toBeCalledTimes(1);
   });
 });

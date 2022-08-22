@@ -12,5 +12,6 @@
   "migrations": [
     "dist/migrations/*.ts"
   ],
+  "logging": true,
   "ssl": false
 }

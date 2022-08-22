@@ -2,11 +2,11 @@ import { AutoMap } from '@automapper/classes';
 import { PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
-    constructor() {
+    constructor(currentUserId: string) {
         this.createDateTime = new Date();
         this.lastChangedDateTime = new Date();
-        this.createdBy = 'N/A';
-        this.lastChangedBy = 'N/A';
+        this.createdBy = currentUserId;
+        this.lastChangedBy = currentUserId;
     }
 
     @PrimaryGeneratedColumn('uuid', { name: 'id' })

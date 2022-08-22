@@ -3,11 +3,13 @@ import { Task, TaskStatus } from './entities/task.entity';
 import { TasksService } from './tasks.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 describe('TasksService', () => {
   let service: TasksService;
   let repo: Repository<Task>;
-
+  const currentUser = new User('first', 'last', 'first@last.com');
+  const taskToBeTested = new Task('test', currentUser);
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,7 +31,7 @@ describe('TasksService', () => {
 
   it('should add with today as assignment_date and status = active', () => {
     const spy = jest.spyOn(repo, 'save').mockImplementation();
-    const newTask = service.create('test');
+    const newTask = service.create("test", currentUser);
     expect(newTask.description).toBe('test');
     const currentDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
     expect(
@@ -51,17 +53,14 @@ describe('TasksService', () => {
   it('should be able to edit the task', async () => {
     jest.spyOn(repo, 'save').mockImplementation();
     const assignmentDate = new Date('02/02/2022');
-    const newTask = new Task('test');
+    const newTask = taskToBeTested;
     newTask.assignmentDate = new Date();
     newTask.id = 'AN_UUID';
     const findSpy = jest
       .spyOn(repo, 'findOne')
       .mockReturnValueOnce(Promise.resolve(newTask));
     const updatedTask = await service.update(
-      newTask.id,
-      'updated description',
-      assignmentDate,
-      newTask.status,
+      { id: newTask.id, description: 'updated description', assignmentDate, status: newTask.status, currentUser },
     );
     expect(findSpy).toHaveBeenCalled();
     expect(findSpy).toHaveBeenCalledWith({
@@ -73,7 +72,7 @@ describe('TasksService', () => {
   it('sending null to update for date leaves date the same as before', async () => {
     jest.spyOn(repo, 'save').mockImplementation();
     const assignmentDate = new Date('02/02/2022');
-    const newTask = new Task('test');
+    const newTask = taskToBeTested;
     newTask.assignmentDate = assignmentDate;
     newTask.id = '1UUID';
     const findSpy = jest
@@ -81,10 +80,7 @@ describe('TasksService', () => {
       .mockReturnValue(Promise.resolve(newTask));
 
     const updatedTask = await service.update(
-      newTask.id,
-      'updated description',
-      undefined,
-      newTask.status,
+      { id: newTask.id, description: 'updated description', assignmentDate: undefined, status: newTask.status, currentUser },
     );
     expect(findSpy).toHaveBeenCalled();
     expect(findSpy).toHaveBeenCalledWith({
@@ -94,10 +90,7 @@ describe('TasksService', () => {
     expect(updatedTask.assignmentDate).toBe(assignmentDate);
     const updatedAssignmentDate = new Date('3/2/2022');
     const updatedTask2 = await service.update(
-      newTask.id,
-      'updated description',
-      updatedAssignmentDate,
-      newTask.status,
+      { id: newTask.id, description: 'updated description', assignmentDate: updatedAssignmentDate, status: newTask.status, currentUser },
     );
     expect(findSpy).toHaveBeenCalled();
     expect(findSpy).toHaveBeenCalledWith({
@@ -108,8 +101,7 @@ describe('TasksService', () => {
     expect(updatedTask2.status).toBe(TaskStatus.ACTIVE);
 
     const updatedTask3 = await service.update(
-      newTask.id,
-      'updated description',
+      { id: newTask.id, description: 'updated description', currentUser },
     );
     expect(findSpy).toHaveBeenCalled();
     expect(findSpy).toHaveBeenCalledWith({
@@ -132,4 +124,11 @@ describe('TasksService', () => {
     });
     expect(await Promise.resolve(results)).toStrictEqual([]);
   });
+  it('has user for task', () => {
+    const currentUser = new User('first', 'last', 'first@last.com');
+    jest.spyOn(repo, 'save').mockImplementation();
+    const assignmentDate = new Date('02/02/2022');
+    const newTask = new Task('test', currentUser);
+    expect(newTask.user).toBe(currentUser);
+  })
 });
