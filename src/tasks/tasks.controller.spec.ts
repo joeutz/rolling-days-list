@@ -38,10 +38,11 @@ describe('TasksController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should call the service create method', () => {
-    const spy = jest.spyOn(service, 'create').mockReturnValue(new Task('test', currentUser));
+  it('should call the service create method', async () => {
+    const mockTask = new Task('test', currentUser);
+    const spy = jest.spyOn(service, 'create').mockReturnValue(Promise.resolve(mockTask));
     const createTaskDto = { description: 'test' };
-    const newTask = controller.create(createTaskDto, currentUser);
+    const newTask = await controller.create(createTaskDto, currentUser);
     expect(newTask.status).toBe(TaskStatus.ACTIVE);
     expect(spy).toBeCalledTimes(1);
   });

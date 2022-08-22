@@ -13,8 +13,8 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto, @RequestUser() user: User): Task {
-    return this.tasksService.create(createTaskDto.description, user);
+  async create(@Body() createTaskDto: CreateTaskDto, @RequestUser() user: User): Promise<Task> {
+    return await this.tasksService.create(createTaskDto.description, user);
   }
 
   // @Get()

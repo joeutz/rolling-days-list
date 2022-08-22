@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task, TaskStatus } from './entities/task.entity';
 import { User } from 'src/users/entities/user.entity';
+import { use } from 'passport';
 
 @Injectable()
 export class TasksService {
@@ -11,8 +12,12 @@ export class TasksService {
     private readonly taskRepository: Repository<Task>,
   ) { }
 
-  create(description: string, currentUser: User) {
+  async create(description: string, currentUser: User) {
     const task = new Task(description, currentUser);
+    const matchingTasks = await this.getByDescriptionAssignmentDateAndUser(task.description, task.assignmentDate, task.user);
+    if (matchingTasks.length > 0) {
+      throw new Error(`Duplicate task ${description} for user ${task.user.firstName} ${task.user.lastName} on same date ${task.assignmentDate} not allowed.`);
+    }
     this.taskRepository.save(task);
     return task;
   }
@@ -60,6 +65,19 @@ export class TasksService {
         assignmentDate: startDay,
       },
     });
+    return results;
+  }
+
+  getByDescriptionAssignmentDateAndUser(description: string, assignmentDate: Date, user: User): Promise<Task[]> {
+    const results =
+      this.taskRepository
+        .find({
+          where: {
+            assignmentDate: assignmentDate,
+            description: description,
+            user: user
+          },
+        });
     return results;
   }
   // remove(id: number) {

@@ -29,9 +29,12 @@ describe('TasksService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should add with today as assignment_date and status = active', () => {
+  it('should add with today as assignment_date and status = active', async () => {
     const spy = jest.spyOn(repo, 'save').mockImplementation();
-    const newTask = service.create("test", currentUser);
+    const findSpy = jest
+      .spyOn(repo, 'find')
+      .mockReturnValueOnce(Promise.resolve([]));
+    const newTask = await service.create("test", currentUser);
     expect(newTask.description).toBe('test');
     const currentDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
     expect(
@@ -130,5 +133,26 @@ describe('TasksService', () => {
     const assignmentDate = new Date('02/02/2022');
     const newTask = new Task('test', currentUser);
     expect(newTask.user).toBe(currentUser);
+  })
+  it('has a unique description for a task by user and assignment date', async () => {
+    const currentUser = new User('first', 'last', 'first@last.com');
+    jest.spyOn(repo, 'save').mockImplementation();
+    let findSpy = jest
+      .spyOn(repo, 'find')
+      .mockReturnValueOnce(Promise.resolve([]));
+    const initialTask = await service.create('test', currentUser);
+    findSpy = jest
+      .spyOn(repo, 'find')
+      .mockReturnValueOnce(Promise.resolve([initialTask]));
+    expect(initialTask).toBeDefined();
+    const startDay = new Date(new Date().setUTCHours(0, 0, 0, 0));
+    expect(findSpy).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith({
+      where: {
+        assignmentDate: startDay,
+        description: 'test',
+        user: currentUser
+      },
+    });
   })
 });
