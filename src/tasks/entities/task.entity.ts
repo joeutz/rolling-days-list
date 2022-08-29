@@ -1,11 +1,13 @@
 import { AutoMap } from '@automapper/classes';
 import { User } from '../../users/entities/user.entity'
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from "../../common/entities/base.entity"
 
 export enum TaskStatus {
-  ACTIVE = 'active',
+  TODO = 'to do',
+  INPROGRESS = 'in progress',
   COMPLETE = 'complete',
+  ARCHIVED = 'archived'
 }
 
 @Entity()
@@ -15,7 +17,7 @@ export class Task extends BaseEntity {
     super(currentUserId)
     this.description = description;
     this.assignmentDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
-    this.status = TaskStatus.ACTIVE;
+    this.status = TaskStatus.TODO;
     this.user = currentUser;
   }
 
@@ -30,7 +32,7 @@ export class Task extends BaseEntity {
   @Column({
     type: 'enum',
     enum: TaskStatus,
-    default: TaskStatus.ACTIVE,
+    default: TaskStatus.TODO,
   })
   @AutoMap()
   status: TaskStatus;

@@ -43,7 +43,7 @@ describe('TasksController', () => {
     const spy = jest.spyOn(service, 'create').mockReturnValue(Promise.resolve(mockTask));
     const createTaskDto = { description: 'test' };
     const newTask = await controller.create(createTaskDto, currentUser);
-    expect(newTask.status).toBe(TaskStatus.ACTIVE);
+    expect(newTask.status).toBe(TaskStatus.TODO);
     expect(spy).toBeCalledTimes(1);
   });
   it('should call the service update method', () => {
@@ -51,7 +51,7 @@ describe('TasksController', () => {
       id: '1',
       description: 'test',
       assignment_date: new Date(),
-      status: TaskStatus.ACTIVE,
+      status: TaskStatus.TODO,
     };
     const spy = jest
       .spyOn(service, 'update')

@@ -50,7 +50,7 @@ describe('TasksService', () => {
         day: '2-digit',
       }),
     );
-    expect(newTask.status).toBe(TaskStatus.ACTIVE);
+    expect(newTask.status).toBe(TaskStatus.TODO);
     expect(spy).toBeCalledTimes(1);
   });
   it('should be able to edit the task', async () => {
@@ -101,7 +101,7 @@ describe('TasksService', () => {
     });
     expect(updatedTask2.description).toBe('updated description');
     expect(updatedTask2.assignmentDate).toBe(updatedAssignmentDate);
-    expect(updatedTask2.status).toBe(TaskStatus.ACTIVE);
+    expect(updatedTask2.status).toBe(TaskStatus.TODO);
 
     const updatedTask3 = await service.update(
       { id: newTask.id, description: 'updated description', currentUser },
@@ -112,7 +112,7 @@ describe('TasksService', () => {
     });
     expect(updatedTask3.description).toBe('updated description');
     expect(updatedTask3.assignmentDate).toBe(updatedAssignmentDate);
-    expect(updatedTask3.status).toBe(TaskStatus.ACTIVE);
+    expect(updatedTask3.status).toBe(TaskStatus.TODO);
   });
   it('get assignments for today runs query from beginning of day to end of day', async () => {
     //create mock return and create spy that validates the start/end dates passed to the task repository
