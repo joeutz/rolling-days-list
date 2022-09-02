@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, LessThan, Not, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task, TaskStatus } from './entities/task.entity';
 import { User } from 'src/users/entities/user.entity';
-import { use } from 'passport';
 
 @Injectable()
 export class TasksService {
@@ -24,6 +23,18 @@ export class TasksService {
 
   async findAll(): Promise<Task[]> {
     return await this.taskRepository.find();
+  }
+
+  async getAllActiveIncompleteBeforeToday(user: User): Promise<Task[]> {
+    const startDay = new Date(new Date().setUTCHours(0, 0, 0, 0));
+    const results = this.taskRepository.find({
+      where: {
+        assignmentDate: LessThan(startDay),
+        user: user,
+        status: Not(In([TaskStatus.ARCHIVED, TaskStatus.COMPLETE]))
+      },
+    });
+    return results;
   }
 
   findOne(id: string) {

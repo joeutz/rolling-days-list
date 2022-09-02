@@ -27,6 +27,11 @@ export class TasksController {
   //   return this.tasksService.findOne(+id);
   // }
 
+  @Get('activeIncompleteBeforeToday')
+  async getAllActiveIncompleteBeforeToday(@RequestUser() user: User): Promise<TaskDto[]> {
+    return await this.tasksService.getAllActiveIncompleteBeforeToday(user);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateTaskDto: TaskDto, @RequestUser() user: User) {
     const assignmentDate = updateTaskDto.assignmentDate
